@@ -33,7 +33,9 @@ while IFS= read -r element; do
   # - Use only reference part of src.
   # - Print missing attachments.
   while IFS= read -r img; do
-    if [[ ! "${attachments[*]}" =~ "$img" ]]; then
+    src=$(echo "$img" | sed 's/.*src="\([^"]*\)[^>]*>/\1/' | \
+            sed 's/.*f=\([^&]*\).*/\1/')
+    if [[ ! "${attachments[*]}" =~ "$src" ]]; then
       if [ -z ${missing} ]; then
         echo "$element" | jq -r '."name" + " (" + ."@id" + ")"'
         missing="true"
@@ -41,7 +43,6 @@ while IFS= read -r element; do
       echo -e "\tmissing: $src"
     fi
   done < <(echo "$element" | jq -r -c  '.text' | \
-    grep -oP "<img[^>]*>" | \
-    sed 's/.*src=\".*[?;]f=\([^"&]*\)[^>]*>/\1/')
+    grep -oP "<img[^>]*>" | sed 's/%2F/\//g' )
 done < <(jq -c '."@graph".[]|select(.genre=="'"$2"'")' \
             $TMP_DIR/ro-crate-metadata.json)
