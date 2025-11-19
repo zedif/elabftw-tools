@@ -27,13 +27,18 @@ while IFS= read -r element; do
                        $TMP_DIR/ro-crate-metadata.json))
   done
 
+  unset missing
   # Check src of each HTML img element in main text of the entry
   # refer to one of the attachments.
   # - Use only reference part of src.
   # - Print missing attachments.
   while IFS= read -r img; do
     if [[ ! "${attachments[*]}" =~ "$img" ]]; then
-      echo "$element" | jq -r '."name"'
+      if [ -z ${missing} ]; then
+        echo "$element" | jq -r '."name" + " (" + ."@id" + ")"'
+        missing="true"
+      fi
+      echo -e "\tmissing: $src"
     fi
   done < <(echo "$element" | jq -r -c  '.text' | \
     grep -oP "<img[^>]*>" | \
