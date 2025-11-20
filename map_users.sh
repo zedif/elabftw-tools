@@ -1,4 +1,14 @@
 #!/bin/bash
+# Maps email addresses of users in metadata of ELN file.
+#
+# Usage: map_users mapping-file eln-file [out-file]
+#
+# mapping-file   CSV file with two columns:
+#                old email address, new email address
+# eln-file       original ELN file
+# out-file       modified ELN file
+#                If not specified, the suffix "-mapped" will be
+#                appended to the original ELN file name.
 
 TMP_DIR=$(mktemp -d)
 
