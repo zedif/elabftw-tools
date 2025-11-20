@@ -29,4 +29,4 @@ done < "$1"
 
 zip --freshen migration.eln */ro-crate-metadata.json
 
-cp migration.eln "$OLDPWD/$(basename "$2" .eln)-migration.eln"
+cp migration.eln "$OLDPWD/${3:-$(basename "$2" .eln)-mapped.eln}"
